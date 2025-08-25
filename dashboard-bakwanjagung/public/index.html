@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Store Bakwanjagung - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-futuristic">
+    <div id="login-page" class="container">
+        <div class="card login-card">
+            <h1 class="text-center futuristic-text">Dashboard Store Bakwanjagung</h1>
+            <p class="text-center">Gunakan email dan password yang terdaftar di Supabase</p>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="admin@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Password">
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            
+            <div id="debug-info" class="debug-container hidden">
+                <h3>Debug Information:</h3>
+                <div id="debug-content"></div>
+            </div>
+            
+            <p id="login-message" class="text-center"></p>
+        </div>
+    </div>
+
+    <div id="dashboard-page" class="container hidden">
+        <div class="header">
+            <h1 class="futuristic-text">Dashboard Players</h1>
+            <button id="logout-btn" class="btn-primary">Logout</button>
+        </div>
+        
+        <div class="card">
+            <div class="table-container">
+                <table id="players-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Rank</th>
+                            <th>Last Update</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Konstanta Supabase
+        const SUPABASE_URL = "https://ygpkzqivuhuztjityeik.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlncGt6cWl2dWh1enRqaXR5ZWlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3ODQwNTIsImV4cCI6MjA3MTM2MDA1Mn0.2u5e1XQR1nQNjp9yEPCDukwzgpvLaU0eW5UiJ2ST30I";
+
+        // Inisialisasi Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Debug mode - set to false untuk production
+        const DEBUG_MODE = true;
+
+        // Elemen DOM
+        const loginPage = document.getElementById('login-page');
+        const dashboardPage = document.getElementById('dashboard-page');
+        const loginForm = document.getElementById('login-form');
+        const loginMessage = document.getElementById('login-message');
+        const logoutBtn = document.getElementById('logout-btn');
+        const playersTable = document.getElementById('players-table');
+        const debugInfo = document.getElementById('debug-info');
+        const debugContent = document.getElementById('debug-content');
+
+        // Event listener untuk form login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            logDebug('Attempting login with:', { email, password: '***' });
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (error) {
+                    logDebug('Login error:', error);
+                    showMessage(error.message, 'error');
+                } else {
+                    logDebug('Login successful:', data);
+                    showMessage('Login berhasil! Mengalihkan...', 'success');
+                    setTimeout(() => {
+                        showDashboard();
+                        loadPlayersData();
+                    }, 1000);
+                }
+            } catch (err) {
+                logDebug('Login exception:', err);
+                showMessage('Terjadi kesalahan saat login: ' + err.message, 'error');
+            }
+        });
+
+        // Event listener untuk logout
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    showMessage('Error during logout: ' + error.message, 'error');
+                } else {
+                    showLogin();
+                }
+            });
+        }
+
+        // Fungsi untuk memeriksa session
+        async function checkSession() {
+            try {
+                const { data, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    logDebug('Session check error:', error);
+                    showLogin();
+                    return;
+                }
+                
+                logDebug('Session data:', data);
+                
+                if (data.session) {
+                    showDashboard();
+                    loadPlayersData();
+                } else {
+                    showLogin();
+                }
+            } catch (err) {
+                logDebug('Session check exception:', err);
+                showLogin();
+            }
+        }
+
+        // Fungsi untuk menampilkan halaman login
+        function showLogin() {
+            if (loginPage) loginPage.classList.remove('hidden');
+            if (dashboardPage) dashboardPage.classList.add('hidden');
+        }
+
+        // Fungsi untuk menampilkan dashboard
+        function showDashboard() {
+            if (loginPage) loginPage.classList.add('hidden');
+            if (dashboardPage) dashboardPage.classList.remove('hidden');
+        }
+
+        // Fungsi untuk menampilkan pesan
+        function showMessage(message, type = 'info') {
+            if (loginMessage) {
+                loginMessage.textContent = message;
+                loginMessage.className = 'text-center';
+                if (type === 'error') {
+                    loginMessage.style.color = '#ff6b6b';
+                } else if (type === 'success') {
+                    loginMessage.style.color = '#51cf66';
+                } else {
+                    loginMessage.style.color = '#fff';
+                }
+            }
+        }
+
+        // Fungsi untuk logging debug
+        function logDebug(title, data) {
+            if (!DEBUG_MODE) return;
+            
+            if (debugInfo) debugInfo.classList.remove('hidden');
+            if (debugContent) {
+                const debugEntry = document.createElement('div');
+                debugEntry.innerHTML = `<strong>${new Date().toLocaleTimeString()}: ${title}</strong><br>${JSON.stringify(data, null, 2)}`;
+                debugContent.appendChild(debugEntry);
+                debugContent.scrollTop = debugContent.scrollHeight;
+            }
+            
+            console.log(title, data);
+        }
+
+        // Fungsi untuk memuat data players
+        async function loadPlayersData() {
+            try {
+                logDebug('Loading players data...');
+                const response = await fetch('/.netlify/functions/getPlayers');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const players = await response.json();
+                logDebug('Players data loaded:', players);
+                
+                renderPlayersTable(players);
+            } catch (error) {
+                logDebug('Error loading players:', error);
+                showMessage('Error loading data: ' + error.message, 'error');
+            }
+        }
+
+        // Fungsi untuk merender tabel players
+        function renderPlayersTable(players) {
+            if (!playersTable) return;
+            
+            const tbody = playersTable.querySelector('tbody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (!players || players.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="4" class="text-center">Tidak ada data players</td>`;
+                tbody.appendChild(row);
+                return;
+            }
+            
+            players.forEach(player => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${player.username || 'N/A'}</td>
+                    <td>${player.rank || 'N/A'}</td>
+                    <td>${player.last_update ? new Date(player.last_update).toLocaleString() : 'N/A'}</td>
+                    <td>
+                        <div class="update-form">
+                            <input type="text" id="rank-${player.username}" value="${player.rank || ''}" placeholder="New rank">
+                            <button class="update-btn" onclick="updateRank('${player.username}')">Update</button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Fungsi untuk update rank (dipanggil dari HTML)
+        async function updateRank(username) {
+            const newRank = document.getElementById(`rank-${username}`).value;
+            
+            if (!newRank) {
+                showMessage('Please enter a rank', 'error');
+                return;
+            }
+            
+            try {
+                logDebug('Updating rank:', { username, newRank });
+                
+                const response = await fetch('/.netlify/functions/updatePlayer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, rank: newRank })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                logDebug('Update result:', result);
+                
+                if (result.success) {
+                    showMessage('Rank updated successfully', 'success');
+                    loadPlayersData();
+                } else {
+                    showMessage('Error updating rank: ' + (result.error || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                logDebug('Error updating player:', error);
+                showMessage('Error updating rank: ' + error.message, 'error');
+            }
+        }
+
+        // Cek session saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            logDebug('DOM loaded, checking session...');
+            checkSession();
+        });
+
+        // Export fungsi untuk akses global (dipanggil dari onclick di HTML)
+        window.updateRank = updateRank;
+    </script>
+</body>
+</html>

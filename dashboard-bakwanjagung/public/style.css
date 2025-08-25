@@ -1,0 +1,376 @@
+:root {
+    --neon-orange: #ff8c00;
+    --neon-blue: #00d9ff;
+    --neon-purple: #a855f7;
+    --dark-bg: #111;
+    --darker-bg: #0a0a0a;
+    --card-bg: rgba(25, 25, 25, 0.8);
+}
+
+body {
+    background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 100%);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: 'Rajdhani', sans-serif;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Efek latar belakang futuristik untuk halaman login */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(255, 140, 0, 0.08) 0%, transparent 25%),
+        radial-gradient(circle at 90% 60%, rgba(0, 217, 255, 0.08) 0%, transparent 25%),
+        radial-gradient(circle at 50% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 25%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.03), transparent),
+        linear-gradient(180deg, transparent, rgba(0, 217, 255, 0.03), transparent);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Card style untuk dashboard */
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 140, 0, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), 
+                0 0 20px rgba(255, 140, 0, 0.15);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    z-index: -1;
+    background: linear-gradient(45deg, #ff8c00, #00d9ff, #a855f7, #ff8c00);
+    background-size: 400% 400%;
+    border-radius: 18px;
+    animation: gradient-border 8s ease infinite;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.card:hover::before {
+    opacity: 0.7;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 
+                0 0 30px rgba(255, 140, 0, 0.25);
+}
+
+/* Card khusus untuk login - tanpa efek warna-warni */
+.login-card {
+    max-width: 450px;
+    margin: 80px auto;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 140, 0, 0.25);
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), 
+                0 0 20px rgba(255, 140, 0, 0.15);
+    transition: all 0.4s ease;
+    overflow: hidden;
+}
+
+/* Hapus efek gradient border dari card login */
+.login-card::before {
+    display: none;
+}
+
+/* Efek hover yang lebih sederhana untuk card login */
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 
+                0 0 25px rgba(255, 140, 0, 0.2);
+}
+
+.login-card:hover::before {
+    opacity: 0; /* Tetap non-aktif untuk card login */
+}
+
+@keyframes gradient-border {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff8c00 0%, #ff5e00 100%);
+    box-shadow: 0 5px 18px rgba(255, 140, 0, 0.45),
+                0 0 12px rgba(255, 140, 0, 0.35);
+    border: none;
+    border-radius: 50px;
+    padding: 14px 32px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+}
+
+/* Tombol login tanpa efek warna-warni */
+.btn-primary:hover {
+    box-shadow: 0 7px 22px rgba(255, 140, 0, 0.7),
+                0 0 18px rgba(255, 140, 0, 0.5);
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #ff8c00 0%, #ff5e00 100%);
+}
+
+.btn-primary:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(255, 140, 0, 0.4);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.futuristic-text {
+    background: linear-gradient(135deg, #ff8c00, #ffb347, #00d9ff, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 300% 300%;
+    animation: gradient-text 5s ease infinite;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+@keyframes gradient-text {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Table styles */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(30, 30, 30, 0.6);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+    background-color: rgba(255, 140, 0, 0.15);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 14px;
+}
+
+tr:hover {
+    background-color: rgba(255, 140, 0, 0.08);
+}
+
+/* Form elements */
+input, select {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 140, 0, 0.4);
+    background: rgba(20, 20, 20, 0.8);
+    color: white;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--neon-orange);
+    box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.25);
+    background: rgba(25, 25, 25, 0.9);
+}
+
+.update-btn {
+    background: rgba(0, 217, 255, 0.25);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.update-btn:hover {
+    background: rgba(0, 217, 255, 0.35);
+    box-shadow: 0 0 12px rgba(0, 217, 255, 0.5);
+}
+
+/* Login Page - Diperindah tanpa efek warna-warni */
+.login-card h1 {
+    margin-bottom: 10px;
+    font-size: 2.5rem;
+}
+
+.login-card p {
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+}
+
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+}
+
+.form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    transform: translateY(-2px);
+}
+
+/* Dashboard */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 140, 0, 0.2);
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+}
+
+#logout-btn {
+    padding: 10px 24px;
+    font-size: 15px;
+}
+
+/* Update Form */
+.update-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.update-form input {
+    width: 140px;
+}
+
+/* Debug container */
+.debug-container {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 25px;
+    max-height: 220px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 13px;
+    border: 1px solid rgba(255, 140, 0, 0.2);
+}
+
+/* Animasi untuk login page */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .login-card {
+        margin: 40px 20px;
+        padding: 30px 25px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .update-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .update-form input {
+        width: 100%;
+    }
+}
