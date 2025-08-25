@@ -374,3 +374,37 @@ input:focus, select:focus {
         width: 100%;
     }
 }
+
+/* Debug panel styles */
+.debug-panel {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.debug-btn {
+    background: rgba(168, 85, 247, 0.2);
+    color: white;
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.debug-btn:hover {
+    background: rgba(168, 85, 247, 0.3);
+}
+
+#login-message {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+#user-email {
+    color: var(--neon-blue);
+    font-weight: 500;
+}
